@@ -26,6 +26,17 @@ export type ClosedSessionsParams = {
 }
 
 /**
+ * Geolocation data.
+ */
+export type Geolocation = {
+  city?: string
+  country?: string
+  countryCode?: string
+  lat?: number
+  lng?: number
+}
+
+/**
  * Information about a node.
  */
 export type Node = {
@@ -43,6 +54,8 @@ export type Node = {
   gateway?: string
   /** Stargate address, if node is a `gateway` */
   stargate?: string
+  /** Geolocation data */
+  geo?: Geolocation
 }
 
 /**

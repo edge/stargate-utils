@@ -18,6 +18,16 @@ export declare type ClosedSessionsParams = {
     to?: number;
 };
 /**
+ * Geolocation data.
+ */
+export declare type Geolocation = {
+    city?: string;
+    country?: string;
+    countryCode?: string;
+    lat?: number;
+    lng?: number;
+};
+/**
  * Information about a node.
  */
 export declare type Node = {
@@ -35,6 +45,8 @@ export declare type Node = {
     gateway?: string;
     /** Stargate address, if node is a `gateway` */
     stargate?: string;
+    /** Geolocation data */
+    geo?: Geolocation;
 };
 /**
  * Data for an open session.
