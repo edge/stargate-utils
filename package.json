@@ -1,5 +1,5 @@
 {
-  "name": "stargate-utils",
+  "name": "@edge/stargate-utils",
   "version": "0.1.0",
   "description": "Utility library for Stargate API",
   "main": "dist/lib/index.js",
