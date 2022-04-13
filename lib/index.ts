@@ -37,6 +37,31 @@ export type Geolocation = {
 }
 
 /**
+ * Metrics recorded for Host sessions.
+ */
+export type HostMetrics = {
+  cdn?: {
+    requests: number
+    data: {
+      in: number
+      out: number
+    }
+    timing: {
+      download: number
+      processing: number
+      total: number
+    }
+  }
+}
+
+/**
+ * Metrics recorded for sessions.
+ */
+export type Metrics = HostMetrics & {
+  messages: number
+}
+
+/**
  * Information about a node.
  */
 export type Node = {
@@ -88,6 +113,7 @@ export type Session = {
   start: number
   lastActive?: number
   end?: number
+  metrics: Metrics
 }
 
 /**
