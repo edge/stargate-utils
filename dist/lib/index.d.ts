@@ -1,5 +1,20 @@
 import { SuperAgentRequest } from 'superagent';
 /**
+ * Metrics recorded for devices that serve CDN requests (specifically, Hosts).
+ */
+export declare type CdnMetrics = {
+    requests: number;
+    data: {
+        in: number;
+        out: number;
+    };
+    timing: {
+        download: number;
+        processing: number;
+        total: number;
+    };
+};
+/**
  * Data for a closed session.
  */
 export declare type ClosedSession = Required<Omit<Session, 'lastActive'>>;
@@ -31,18 +46,7 @@ export declare type Geolocation = {
  * Metrics recorded for Host sessions.
  */
 export declare type HostMetrics = {
-    cdn?: {
-        requests: number;
-        data: {
-            in: number;
-            out: number;
-        };
-        timing: {
-            download: number;
-            processing: number;
-            total: number;
-        };
-    };
+    cdn?: CdnMetrics;
 };
 /**
  * Metrics recorded for sessions.
