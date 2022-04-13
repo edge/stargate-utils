@@ -6,6 +6,22 @@ import { toQueryString } from './helpers'
 import superagent, { SuperAgentRequest } from 'superagent'
 
 /**
+ * Metrics recorded for devices that serve CDN requests (specifically, Hosts).
+ */
+export type CdnMetrics = {
+  requests: number
+  data: {
+    in: number
+    out: number
+  }
+  timing: {
+    download: number
+    processing: number
+    total: number
+  }
+}
+
+/**
  * Data for a closed session.
  */
 export type ClosedSession = Required<Omit<Session, 'lastActive'>>
@@ -40,18 +56,7 @@ export type Geolocation = {
  * Metrics recorded for Host sessions.
  */
 export type HostMetrics = {
-  cdn?: {
-    requests: number
-    data: {
-      in: number
-      out: number
-    }
-    timing: {
-      download: number
-      processing: number
-      total: number
-    }
-  }
+  cdn?: CdnMetrics
 }
 
 /**
