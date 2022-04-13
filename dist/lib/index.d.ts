@@ -28,6 +28,29 @@ export declare type Geolocation = {
     lng?: number;
 };
 /**
+ * Metrics recorded for Host sessions.
+ */
+export declare type HostMetrics = {
+    cdn?: {
+        requests: number;
+        data: {
+            in: number;
+            out: number;
+        };
+        timing: {
+            download: number;
+            processing: number;
+            total: number;
+        };
+    };
+};
+/**
+ * Metrics recorded for sessions.
+ */
+export declare type Metrics = HostMetrics & {
+    messages: number;
+};
+/**
  * Information about a node.
  */
 export declare type Node = {
@@ -76,6 +99,7 @@ export declare type Session = {
     start: number;
     lastActive?: number;
     end?: number;
+    metrics: Metrics;
 };
 /**
  * Get closed sessions from a Stargate.
