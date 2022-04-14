@@ -118,7 +118,7 @@ export type Session = {
   start: number
   lastActive?: number
   end?: number
-  metrics: Metrics
+  metrics?: Metrics
 }
 
 /**
