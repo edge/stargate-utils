@@ -109,10 +109,10 @@ export declare type Session = {
  * Get closed sessions from a Stargate.
  *
  * ```
- * const sessions = await closedSessions('https://stargate.edge.network')
+ * const sessions = await closedSessions('https://stargate.edge.network', 'my-bearer-token')
  * ```
  */
-export declare const closedSessions: (host: string, params?: ClosedSessionsParams | undefined, cb?: RequestCallback | undefined) => Promise<ClosedSession[]>;
+export declare const closedSessions: (host: string, token: string, params?: ClosedSessionsParams | undefined, cb?: RequestCallback | undefined) => Promise<ClosedSession[]>;
 /**
  * Determine whether a session is closed.
  */
@@ -133,7 +133,7 @@ export declare const openSessions: (host: string, cb?: RequestCallback | undefin
  * Get both closed and open sessions from a Stargate.
  *
  * ```
- * const sessions = await sessions('https://stargate.edge.network')
+ * const sessions = await sessions('https://stargate.edge.network', 'my-bearer-token')
  * ```
  */
-export declare const sessions: (host: string, params?: ClosedSessionsParams | undefined, cb?: RequestCallback | undefined) => Promise<Session[]>;
+export declare const sessions: (host: string, token: string, params?: ClosedSessionsParams | undefined, cb?: RequestCallback | undefined) => Promise<Session[]>;

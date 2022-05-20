@@ -58,23 +58,24 @@ var superagent_1 = __importDefault(require("superagent"));
  * Get closed sessions from a Stargate.
  *
  * ```
- * const sessions = await closedSessions('https://stargate.edge.network')
+ * const sessions = await closedSessions('https://stargate.edge.network', 'my-bearer-token')
  * ```
  */
-var closedSessions = function (host, params, cb) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, response, _a;
+var closedSessions = function (host, token, params, cb) { return __awaiter(void 0, void 0, void 0, function () {
+    var url, req, response, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 url = "".concat(host, "/sessions/closed");
                 if (params !== undefined)
                     url += "?".concat((0, helpers_1.toQueryString)(params));
+                req = superagent_1["default"].get(url).set('Authorization', "Bearer ".concat(token));
                 if (!(cb === undefined)) return [3 /*break*/, 2];
-                return [4 /*yield*/, superagent_1["default"].get(url)];
+                return [4 /*yield*/, req];
             case 1:
                 _a = _b.sent();
                 return [3 /*break*/, 4];
-            case 2: return [4 /*yield*/, cb(superagent_1["default"].get(url))];
+            case 2: return [4 /*yield*/, cb(req)];
             case 3:
                 _a = _b.sent();
                 _b.label = 4;
@@ -128,16 +129,16 @@ exports.openSessions = openSessions;
  * Get both closed and open sessions from a Stargate.
  *
  * ```
- * const sessions = await sessions('https://stargate.edge.network')
+ * const sessions = await sessions('https://stargate.edge.network', 'my-bearer-token')
  * ```
  */
-var sessions = function (host, params, cb) { return __awaiter(void 0, void 0, void 0, function () {
+var sessions = function (host, token, params, cb) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 _a = [[]];
-                return [4 /*yield*/, (0, exports.closedSessions)(host, params, cb)];
+                return [4 /*yield*/, (0, exports.closedSessions)(host, token, params, cb)];
             case 1:
                 _b = [__spreadArray.apply(void 0, _a.concat([_c.sent(), true]))];
                 return [4 /*yield*/, (0, exports.openSessions)(host, cb)];

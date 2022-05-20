@@ -125,17 +125,19 @@ export type Session = {
  * Get closed sessions from a Stargate.
  *
  * ```
- * const sessions = await closedSessions('https://stargate.edge.network')
+ * const sessions = await closedSessions('https://stargate.edge.network', 'my-bearer-token')
  * ```
  */
 export const closedSessions = async (
   host: string,
+  token: string,
   params?: ClosedSessionsParams,
   cb?: RequestCallback
 ): Promise<ClosedSession[]> => {
   let url = `${host}/sessions/closed`
   if (params !== undefined) url += `?${toQueryString(params)}`
-  const response = cb === undefined ? await superagent.get(url) : await cb(superagent.get(url))
+  const req = superagent.get(url).set('Authorization', `Bearer ${token}`)
+  const response = cb === undefined ? await req : await cb(req)
   return response.body
 }
 
@@ -166,14 +168,15 @@ export const openSessions = async (host: string, cb?: RequestCallback): Promise<
  * Get both closed and open sessions from a Stargate.
  *
  * ```
- * const sessions = await sessions('https://stargate.edge.network')
+ * const sessions = await sessions('https://stargate.edge.network', 'my-bearer-token')
  * ```
  */
 export const sessions = async (
   host: string,
+  token: string,
   params?: ClosedSessionsParams,
   cb?: RequestCallback
 ): Promise<Session[]> => [
-  ...await closedSessions(host, params, cb),
+  ...await closedSessions(host, token, params, cb),
   ...await openSessions(host, cb)
 ]
