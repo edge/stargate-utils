@@ -62,26 +62,29 @@ var superagent_1 = __importDefault(require("superagent"));
  * ```
  */
 var closedSessions = function (host, token, params, cb) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, req, response, _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, baseUrl, header, url, req, res, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                url = "".concat(host, "/sessions/closed");
+                _a = parseHost(host), baseUrl = _a[0], header = _a[1];
+                url = "".concat(baseUrl, "/sessions/closed");
                 if (params !== undefined)
                     url += "?".concat((0, helpers_1.toQueryString)(params));
-                req = superagent_1["default"].get(url).set('Authorization', "Bearer ".concat(token));
+                req = superagent_1["default"].get(url)
+                    .set('Host', header)
+                    .set('Authorization', "Bearer ".concat(token));
                 if (!(cb === undefined)) return [3 /*break*/, 2];
                 return [4 /*yield*/, req];
             case 1:
-                _a = _b.sent();
+                _b = _c.sent();
                 return [3 /*break*/, 4];
             case 2: return [4 /*yield*/, cb(req)];
             case 3:
-                _a = _b.sent();
-                _b.label = 4;
+                _b = _c.sent();
+                _c.label = 4;
             case 4:
-                response = _a;
-                return [2 /*return*/, response.body];
+                res = _b;
+                return [2 /*return*/, res.body];
         }
     });
 }); };
@@ -97,6 +100,27 @@ exports.isClosed = isClosed;
 var isOpen = function (session) { return session.end === undefined; };
 exports.isOpen = isOpen;
 /**
+ * Parse a Host string or object to a tuple of request base URL and Host header value.
+ *
+ * For example:
+ *
+ * ```js
+ * const host = {
+ *   address: '1.2.3.4',
+ *   host: 'stargate.edge.network',
+ *   protocol: 'https'
+ * }
+ * const [url, header] = parseHost(host)
+ * const data = await superagent.get(url).set("Host", header)
+ * ```
+ */
+var parseHost = function (h) {
+    var _a;
+    if (typeof h === 'string')
+        return [h, ((_a = h.match(urlRegexp)) === null || _a === void 0 ? void 0 : _a[1]) || ''];
+    return ["".concat(h.protocol, "://").concat(h.address), h.host];
+};
+/**
  * Get open sessions from a Stargate.
  *
  * ```
@@ -104,23 +128,25 @@ exports.isOpen = isOpen;
  * ```
  */
 var openSessions = function (host, cb) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, response, _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var _a, baseUrl, header, url, req, res, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                url = "".concat(host, "/sessions/open");
+                _a = parseHost(host), baseUrl = _a[0], header = _a[1];
+                url = "".concat(baseUrl, "/sessions/open");
+                req = superagent_1["default"].get(url).set('Host', header);
                 if (!(cb === undefined)) return [3 /*break*/, 2];
-                return [4 /*yield*/, superagent_1["default"].get(url)];
+                return [4 /*yield*/, req];
             case 1:
-                _a = _b.sent();
+                _b = _c.sent();
                 return [3 /*break*/, 4];
-            case 2: return [4 /*yield*/, cb(superagent_1["default"].get(url))];
+            case 2: return [4 /*yield*/, cb(req)];
             case 3:
-                _a = _b.sent();
-                _b.label = 4;
+                _b = _c.sent();
+                _c.label = 4;
             case 4:
-                response = _a;
-                return [2 /*return*/, response.body];
+                res = _b;
+                return [2 /*return*/, res.body];
         }
     });
 }); };
@@ -147,3 +173,8 @@ var sessions = function (host, token, params, cb) { return __awaiter(void 0, voi
     });
 }); };
 exports.sessions = sessions;
+/**
+ * Domain matching expression.
+ * See `parseHost()` for usage.
+ */
+var urlRegexp = /^https?:\/\/([^/]+)/;

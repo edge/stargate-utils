@@ -43,6 +43,25 @@ export declare type Geolocation = {
     lng?: number;
 };
 /**
+ * A Host [base URL] can be expressed as a string or an object.
+ *
+ * The object form allows a different hostname (or Host header) to be used than is actually used in the request.
+ * The example below is roughly equivalent to `curl -H 'Host: stargate.edge.network' 'https://1.2.3.4'`:
+ *
+ * ```json
+ * { "address": "1.2.3.4", "host": "stargate.edge.network", "protocol": "https" }
+ * ```
+ *
+ * See `parseHost()` for a standard parsing implementation.
+ *
+ * **This type is completely unrelated to network Hosts.**
+ */
+export declare type Host = string | {
+    address: string;
+    host: string;
+    protocol: string;
+};
+/**
  * Metrics recorded for Host sessions.
  */
 export declare type HostMetrics = {
@@ -112,7 +131,7 @@ export declare type Session = {
  * const sessions = await closedSessions('https://stargate.edge.network', 'my-bearer-token')
  * ```
  */
-export declare const closedSessions: (host: string, token: string, params?: ClosedSessionsParams | undefined, cb?: RequestCallback | undefined) => Promise<ClosedSession[]>;
+export declare const closedSessions: (host: Host, token: string, params?: ClosedSessionsParams, cb?: RequestCallback) => Promise<ClosedSession[]>;
 /**
  * Determine whether a session is closed.
  */
@@ -128,7 +147,7 @@ export declare const isOpen: (session: Session) => boolean;
  * const sessions = await openSessions('https://stargate.edge.network')
  * ```
  */
-export declare const openSessions: (host: string, cb?: RequestCallback | undefined) => Promise<OpenSession[]>;
+export declare const openSessions: (host: Host, cb?: RequestCallback) => Promise<OpenSession[]>;
 /**
  * Get both closed and open sessions from a Stargate.
  *
@@ -136,4 +155,4 @@ export declare const openSessions: (host: string, cb?: RequestCallback | undefin
  * const sessions = await sessions('https://stargate.edge.network', 'my-bearer-token')
  * ```
  */
-export declare const sessions: (host: string, token: string, params?: ClosedSessionsParams | undefined, cb?: RequestCallback | undefined) => Promise<Session[]>;
+export declare const sessions: (host: Host, token: string, params?: ClosedSessionsParams, cb?: RequestCallback) => Promise<Session[]>;
