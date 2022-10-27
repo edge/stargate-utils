@@ -53,6 +53,26 @@ export type Geolocation = {
 }
 
 /**
+ * A Host [base URL] can be expressed as a string or an object.
+ *
+ * The object form allows a different hostname (or Host header) to be used than is actually used in the request.
+ * The example below is roughly equivalent to `curl -H 'Host: stargate.edge.network' 'https://1.2.3.4'`:
+ *
+ * ```json
+ * { "address": "1.2.3.4", "host": "stargate.edge.network", "protocol": "https" }
+ * ```
+ *
+ * See `parseHost()` for a standard parsing implementation.
+ *
+ * **This type is completely unrelated to network Hosts.**
+ */
+export type Host = string | {
+  address: string
+  host: string
+  protocol: string
+}
+
+/**
  * Metrics recorded for Host sessions.
  */
 export type HostMetrics = {
@@ -129,16 +149,19 @@ export type Session = {
  * ```
  */
 export const closedSessions = async (
-  host: string,
+  host: Host,
   token: string,
   params?: ClosedSessionsParams,
   cb?: RequestCallback
 ): Promise<ClosedSession[]> => {
-  let url = `${host}/sessions/closed`
+  const [baseUrl, header] = parseHost(host)
+  let url = `${baseUrl}/sessions/closed`
   if (params !== undefined) url += `?${toQueryString(params)}`
-  const req = superagent.get(url).set('Authorization', `Bearer ${token}`)
-  const response = cb === undefined ? await req : await cb(req)
-  return response.body
+  const req = superagent.get(url)
+    .set('Host', header)
+    .set('Authorization', `Bearer ${token}`)
+  const res = cb === undefined ? await req : await cb(req)
+  return res.body
 }
 
 /**
@@ -151,6 +174,27 @@ export const isClosed = (session: Session): boolean => !isOpen(session)
  */
 export const isOpen = (session: Session): boolean => session.end === undefined
 
+
+/**
+ * Parse a Host string or object to a tuple of request base URL and Host header value.
+ *
+ * For example:
+ *
+ * ```js
+ * const host = {
+ *   address: '1.2.3.4',
+ *   host: 'stargate.edge.network',
+ *   protocol: 'https'
+ * }
+ * const [url, header] = parseHost(host)
+ * const data = await superagent.get(url).set("Host", header)
+ * ```
+ */
+const parseHost = (h: Host): [string, string] => {
+  if (typeof h === 'string') return [h, h.match(urlRegexp)?.[1] || '']
+  return [`${h.protocol}://${h.address}`, h.host]
+}
+
 /**
  * Get open sessions from a Stargate.
  *
@@ -158,10 +202,12 @@ export const isOpen = (session: Session): boolean => session.end === undefined
  * const sessions = await openSessions('https://stargate.edge.network')
  * ```
  */
-export const openSessions = async (host: string, cb?: RequestCallback): Promise<OpenSession[]> => {
-  const url = `${host}/sessions/open`
-  const response = cb === undefined ? await superagent.get(url) : await cb(superagent.get(url))
-  return response.body
+export const openSessions = async (host: Host, cb?: RequestCallback): Promise<OpenSession[]> => {
+  const [baseUrl, header] = parseHost(host)
+  const url = `${baseUrl}/sessions/open`
+  const req = superagent.get(url).set('Host', header)
+  const res = cb === undefined ? await req : await cb(req)
+  return res.body
 }
 
 /**
@@ -172,7 +218,7 @@ export const openSessions = async (host: string, cb?: RequestCallback): Promise<
  * ```
  */
 export const sessions = async (
-  host: string,
+  host: Host,
   token: string,
   params?: ClosedSessionsParams,
   cb?: RequestCallback
@@ -180,3 +226,9 @@ export const sessions = async (
   ...await closedSessions(host, token, params, cb),
   ...await openSessions(host, cb)
 ]
+
+/**
+ * Domain matching expression.
+ * See `parseHost()` for usage.
+ */
+const urlRegexp = /^https?:\/\/([^/]+)/
