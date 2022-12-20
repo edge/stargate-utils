@@ -4,6 +4,7 @@
 
 import { SuperAgentRequest } from 'superagent'
 
+export * as service from './service'
 export * as session from './session'
 
 /**

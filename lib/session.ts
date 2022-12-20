@@ -141,9 +141,6 @@ export const isClosed = (session: Session): boolean => !isOpen(session)
  */
 export const isOpen = (session: Session): boolean => session.end === undefined
 
-
-
-
 /**
  * Get open sessions from a Stargate.
  *
@@ -175,4 +172,3 @@ export const sessions = async (
   ...await closedSessions(host, token, params, cb),
   ...await openSessions(host, cb)
 ]
-
